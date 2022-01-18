@@ -146,7 +146,7 @@ body {
   #header {
     transition: all 0.5s;
     z-index: 997;
-    padding: 15px 0;
+    padding: 2px 0;
     background: var(--secondary);
   }
   #header.header-scrolled, #header.header-inner-pages {
@@ -241,7 +241,11 @@ body {
     width: 22px;
     padding-right: 5px;
   }
-
+  
+  .nav-logo2 {
+    width: 40px;
+    padding-right: 5px;
+  }
 
   .navbar .mine {
     /* width: auto; */
