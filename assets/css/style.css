@@ -12,7 +12,7 @@
 :root {
   --primary: #09002d;
   --secondary: rgb(9 0 45 / 80%);
-  --secondary-dark: rgb(9 0 45 / 90%);
+  --secondary-dark: #2265ee;
   --token: #2265ee;
 }
 
