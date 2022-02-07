@@ -23,7 +23,8 @@ var withdrawCooldown=0;
 var contract;
 const minerAddress = '0x4F77011f3c4dDBF3203CE4142021CEB817F14fb7'
 
-const tokenAddress = '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' // mainnet busd
+const tokenAddress = '0xE4f8bcD4FfD9BB7e0B2bE43326DC60ff5db4C3aA' // mainnet walt
+//'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' // mainnet busd
 //'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' //testnet busd
 
 var tokenContract;
@@ -187,7 +188,7 @@ function refreshData() {
 
     contract.methods.WALLET_DEPOSIT_LIMIT().call().then(busd => {
         maxDeposit = busd;
-        $("#max-deposit").html(`${readableBUSD(busd, 2)} BUSD`)
+        $("#max-deposit").html(`${readableBUSD(busd, 2)} WALT`)
     }).catch((err) => {
         console.log(err);
     });
@@ -660,16 +661,16 @@ function buyEggs(){
 
     var amt = web3.utils.toWei(busd);
 	if(+amt + +totalDeposits > +maxDeposit) {
-		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} BUSD`);
+		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
         return
     }
     if(+amt > usrBal) {
-		alert("you do not have " + busd + " BUSD in your wallet");
+		alert("you do not have " + busd + " WALT in your wallet");
         return
     }
     if (+spend < +busd) {
         var amtToSpend = busd - spend;
-        alert("you first need to approve " + amtToSpend + " BUSD before depositing");
+        alert("you first need to approve " + amtToSpend + " WALT before depositing");
         return
     }
 
