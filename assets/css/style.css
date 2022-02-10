@@ -154,7 +154,7 @@ body {
   }
   #header .logo {
     font-size: 32px;
-    margin: 0;
+    margin-left: 10px;
     padding: 0;
     line-height: 1;
     font-weight: 700;
@@ -169,8 +169,9 @@ body {
   }
 
   #header .logo img {
-    max-height: 100%;
-    width: 100px;
+    margin-left: -150px;
+    max-height: 80px;
+    width: 350px;
   }
 
   /*--------------------------------------------------------------
@@ -254,7 +255,7 @@ body {
     padding: 10px;
     max-width: 120px;
     border-radius: 6px;
-    border: 1px solid #2265ee;
+    border: 1px solid #ffffff;
     background-color: transparent;
     /* text-align: center; */
   }
