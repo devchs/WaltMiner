@@ -21,9 +21,10 @@ var cutoffStep=0;
 var withdrawCooldown=0;
 
 var contract;
-const minerAddress = '0x4381bCe84c97Ad6c3Fe6A0a985b0914f55D00515'
+const minerAddress = '0x13b511bC21a05087B3297818f3aC3bF0b9039907'
 
-const tokenAddress = '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' // mainnet busd
+const tokenAddress = '0xE4f8bcD4FfD9BB7e0B2bE43326DC60ff5db4C3aA' // mainnet walt
+//'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' // mainnet busd
 //'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' //testnet busd
 
 var tokenContract;
@@ -150,7 +151,7 @@ function refreshData() {
 
     contract.methods.COMPOUND_BONUS().call().then(r => {
         compoundPercent = r / 10;
-        $("#daily-compound").html(`${compoundPercent}% Daily Compound Bonus`)
+        $("#daily-compound").html(`${compoundPercent}% Compound Bonus`)
         $("#compound-percent").html(`${compoundPercent}%`)
     }).catch((err) => {
         console.log(err);
