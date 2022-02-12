@@ -29,7 +29,7 @@ const tokenAddress = '0xE4f8bcD4FfD9BB7e0B2bE43326DC60ff5db4C3aA' // mainnet wal
 
 var tokenContract;
 
-var started = true;
+var started = false;
 
 var canSell = true;
 
