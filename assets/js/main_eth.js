@@ -21,11 +21,11 @@ var cutoffStep=0;
 var withdrawCooldown=0;
 
 var contract;
-const minerAddress = '0x13b511bC21a05087B3297818f3aC3bF0b9039907'
+//const minerAddress = '0x13b511bC21a05087B3297818f3aC3bF0b9039907'
+const minerAddress = '0x002F1e12e7b101Deaf512a261524f5b21F62D186'
 
-const tokenAddress = '0xE4f8bcD4FfD9BB7e0B2bE43326DC60ff5db4C3aA' // mainnet walt
-//'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' // mainnet busd
-//'0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' //testnet busd
+//const tokenAddress = '0xE4f8bcD4FfD9BB7e0B2bE43326DC60ff5db4C3aA' // mainnet walt
+const tokenAddress = '0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82' //CAKE mainnet
 
 var tokenContract;
 
