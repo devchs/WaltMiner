@@ -280,7 +280,7 @@ function refreshData() {
 
 
     /** How many miners and eggs per day user will recieve for 10 WALT deposit **/
-    contract.methods.getEggsYield(web3.utils.toWei('500')).call().then(result => {
+    contract.methods.getEggsYield(web3.utils.toWei('10')).call().then(result => {
         var miners = result[0];
         var busd = result[1];
         var amt = readableBUSD(busd, 4);
