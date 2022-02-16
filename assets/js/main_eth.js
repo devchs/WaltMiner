@@ -593,16 +593,16 @@ function buyEggs(){
 
     var amt = web3.utils.toWei(busd);
 	if(+amt + +totalDeposits > +maxDeposit) {
-		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} BUSD`);
+		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
         return
     }
     if(+amt > usrBal) {
-		alert("you do not have " + busd + " BUSD in your wallet");
+		alert("you do not have " + busd + " WALT in your wallet");
         return
     }
     if (+spend < +busd) {
         var amtToSpend = busd - spend;
-        alert("you first need to approve " + amtToSpend + " BUSD before depositing");
+        alert("you first need to approve " + amtToSpend + " WALT before depositing");
         return
     }
 
