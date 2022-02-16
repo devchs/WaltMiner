@@ -3,22 +3,22 @@ var web3;
 var spend;
 var usrBal;
 var priceInUSD;
-var lastNumEggs = -1
-var lastNumMiners = -1
-var lastSecondsUntilFull = 100
-var lastHatchTime = 0
-var eggstohatch1 = 0
-var maxDeposit = 0
-var totalDeposits = 0
-var lastUpdate = new Date().getTime()
+var lastNumEggs=-1
+var lastNumMiners=-1
+var lastSecondsUntilFull=100
+var lastHatchTime=0
+var eggstohatch1=0
+var maxDeposit=0
+var totalDeposits=0
+var lastUpdate=new Date().getTime()
 var contractBalance;
 
-var compoundPercent = 0;
-var compoundMaxDays = 0;
-var compoundStep = 0;
+var compoundPercent=0;
+var compoundMaxDays=0;
+var compoundStep=0;
 
-var cutoffStep = 0;
-var withdrawCooldown = 0;
+var cutoffStep=0;
+var withdrawCooldown=0;
 
 var contract;
 const minerAddress = '0x6646ee80abBd7eA47Ca1ac5254bD605BF281b83F'
@@ -31,8 +31,9 @@ var started = false;
 
 var canSell = true;
 
-const tokenAbi = [{ "inputs": [], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "owner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "spender", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" }, { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }], "name": "OwnershipTransferred", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "from", "type": "address" }, { "indexed": true, "internalType": "address", "name": "to", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "constant": true, "inputs": [], "name": "_decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "_name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "_symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "account", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "burn", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" }], "name": "decreaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getOwner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "addedValue", "type": "uint256" }], "name": "increaseAllowance", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "mint", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "owner", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [], "name": "renounceOwnership", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "sender", "type": "address" }, { "internalType": "address", "name": "recipient", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }], "name": "transferOwnership", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }]
-const minerAbi = [{ "inputs": [{ "internalType": "address payable", "name": "_owner", "type": "address" }, { "internalType": "address payable", "name": "_project", "type": "address" }, { "internalType": "address payable", "name": "_partner1", "type": "address" }, { "internalType": "address payable", "name": "_partner2", "type": "address" }, { "internalType": "address payable", "name": "_marketing", "type": "address" }, { "internalType": "address payable", "name": "_buyback", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "investor", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "pot", "type": "uint256" }, { "indexed": true, "internalType": "uint256", "name": "round", "type": "uint256" }], "name": "LotteryWinner", "type": "event" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "BONUS_COMPOUND_STEP", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "BONUS_DAILY_COMPOUND", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "BONUS_DAILY_COMPOUND_BONUS_MAX_TIMES", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "BUYBACK", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "value", "type": "address" }], "name": "CHANGE_MARKETING", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "value", "type": "address" }], "name": "CHANGE_OWNERSHIP", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "value", "type": "address" }], "name": "CHANGE_PARTNER1", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "value", "type": "address" }], "name": "CHANGE_PARTNER2", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "value", "type": "address" }], "name": "CHANGE_PROJECT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "COMPOUND_BONUS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "COMPOUND_BONUS_MAX_TIMES", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "COMPOUND_SPECIAL_BONUS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "COMPOUND_STEP", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "CUTOFF_STEP", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "DISABLE_LOTTERY", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "EGGS_TO_HIRE_1MINERS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "EGGS_TO_HIRE_1MINERS_COMPOUND", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "ENABLE_LOTTERY", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "EVENT_MAX_LOTTERY_TICKET", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY_ACTIVATED", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY_PERCENT", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY_START_TIME", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY_STEP", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "LOTTERY_TICKET_PRICE", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MARKETING", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MARKET_EGGS_DIVISOR", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MARKET_EGGS_DIVISOR_SELL", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MAX_LOTTERY_PARTICIPANTS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MAX_LOTTERY_TICKET", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "MIN_INVEST", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PARTNER", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "PERCENTS_DIVIDER", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_EGGS_TO_HIRE_1MINERS", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_EGGS_TO_HIRE_1MINERS_COMPOUND", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_LOTTERY", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_MARKETING", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_MARKET_EGGS_DIVISOR", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_MARKET_EGGS_DIVISOR_SELL", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_PARTNER", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_PROJECT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "PRC_REFERRAL", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "PROJECT", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "bool", "name": "value", "type": "bool" }, { "internalType": "uint256", "name": "addCompoundBonus", "type": "uint256" }, { "internalType": "uint256", "name": "addReferralEvent", "type": "uint256" }, { "internalType": "uint256", "name": "addMaxTicket", "type": "uint256" }], "name": "PROMO_EVENT_SPECIAL", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "PSNS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "REFERRAL", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "REFERRAL_EVENT_BONUS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_BONUS", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_CUTOFF_STEP", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_INVEST_MIN", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_LOTTERY_PERCENT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_LOTTERY_STEP", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_LOTTERY_TICKET_PRICE", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_MAX_LOTTERY_PARTICIPANTS", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_MAX_LOTTERY_TICKET", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_WALLET_DEPOSIT_LIMIT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_WITHDRAWAL_TAX", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_WITHDRAW_COOLDOWN", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_WITHDRAW_DAYS_TAX", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "SET_WITHDRAW_LIMIT", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "WALLET_DEPOSIT_LIMIT", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "WITHDRAWAL_TAX", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "WITHDRAWAL_TAX_DAYS", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "WITHDRAW_COOLDOWN", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "WITHDRAW_LIMIT", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "ref", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "buyEggs", "outputs": [], "stateMutability": "payable", "type": "function" }, { "inputs": [], "name": "buyback", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "eth", "type": "uint256" }, { "internalType": "uint256", "name": "contractBalance", "type": "uint256" }], "name": "calculateEggBuy", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "eth", "type": "uint256" }], "name": "calculateEggBuySimple", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "eggs", "type": "uint256" }], "name": "calculateEggSell", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "eggs", "type": "uint256" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "calculateEggSellForYield", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "rt", "type": "uint256" }, { "internalType": "uint256", "name": "rs", "type": "uint256" }, { "internalType": "uint256", "name": "bs", "type": "uint256" }], "name": "calculateTrade", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "chooseWinner", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "contractStarted", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "currentPot", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_adr", "type": "address" }], "name": "getAvailableEarnings", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getBalance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_adr", "type": "address" }, { "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "getDailyCompoundBonus", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "adr", "type": "address" }], "name": "getEggsSinceLastHatch", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "getEggsYield", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "eggValue", "type": "uint256" }], "name": "getFees", "outputs": [{ "internalType": "uint256", "name": "_projectFee", "type": "uint256" }, { "internalType": "uint256", "name": "_partnerFee", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }], "name": "getLotteryHistory", "outputs": [{ "internalType": "uint256", "name": "round", "type": "uint256" }, { "internalType": "address", "name": "winnerAddress", "type": "address" }, { "internalType": "uint256", "name": "pot", "type": "uint256" }, { "internalType": "uint256", "name": "totalLotteryParticipants", "type": "uint256" }, { "internalType": "uint256", "name": "totalLotteryTickets", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getLotteryInfo", "outputs": [{ "internalType": "uint256", "name": "lotteryStartTime", "type": "uint256" }, { "internalType": "uint256", "name": "lotteryStep", "type": "uint256" }, { "internalType": "uint256", "name": "lotteryCurrentPot", "type": "uint256" }, { "internalType": "uint256", "name": "lotteryParticipants", "type": "uint256" }, { "internalType": "uint256", "name": "maxLotteryParticipants", "type": "uint256" }, { "internalType": "uint256", "name": "totalLotteryTickets", "type": "uint256" }, { "internalType": "uint256", "name": "lotteryTicketPrice", "type": "uint256" }, { "internalType": "uint256", "name": "maxLotteryTicket", "type": "uint256" }, { "internalType": "uint256", "name": "lotteryPercent", "type": "uint256" }, { "internalType": "uint256", "name": "round", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getLotteryTimer", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getMyEggs", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getMyMiners", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getSiteInfo", "outputs": [{ "internalType": "uint256", "name": "_totalStaked", "type": "uint256" }, { "internalType": "uint256", "name": "_totalDeposits", "type": "uint256" }, { "internalType": "uint256", "name": "_totalCompound", "type": "uint256" }, { "internalType": "uint256", "name": "_totalRefBonus", "type": "uint256" }, { "internalType": "uint256", "name": "_totalLotteryBonus", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "getTimeStamp", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_adr", "type": "address" }], "name": "getUserInfo", "outputs": [{ "internalType": "uint256", "name": "_initialDeposit", "type": "uint256" }, { "internalType": "uint256", "name": "_userDeposit", "type": "uint256" }, { "internalType": "uint256", "name": "_miners", "type": "uint256" }, { "internalType": "uint256", "name": "_claimedEggs", "type": "uint256" }, { "internalType": "uint256", "name": "_totalLotteryBonus", "type": "uint256" }, { "internalType": "uint256", "name": "_lastHatch", "type": "uint256" }, { "internalType": "address", "name": "_referrer", "type": "address" }, { "internalType": "uint256", "name": "_referrals", "type": "uint256" }, { "internalType": "uint256", "name": "_totalWithdrawn", "type": "uint256" }, { "internalType": "uint256", "name": "_referralEggRewards", "type": "uint256" }, { "internalType": "uint256", "name": "_dailyCompoundBonus", "type": "uint256" }, { "internalType": "uint256", "name": "_lastWithdrawTime", "type": "uint256" }, { "internalType": "uint256", "name": "_withdrawCount", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_userAddress", "type": "address" }], "name": "getUserTickets", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "_addr", "type": "address" }, { "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "hatchEgg", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [{ "internalType": "bool", "name": "isCompound", "type": "bool" }], "name": "hatchEggs", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "lotteryRound", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "marketEggs", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "marketing", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "owner", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "uint256", "name": "", "type": "uint256" }], "name": "participantAdresses", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "participants", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "partner1", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "partner2", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "project", "outputs": [{ "internalType": "address payable", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "sellEggs", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "specialEventBonus", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }, { "internalType": "address", "name": "", "type": "address" }], "name": "ticketOwners", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "token_BUSD", "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalCompound", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalDeposits", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalLotteryBonus", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalRefBonus", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalStaked", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalTickets", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [], "name": "totalWithdrawn", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "", "type": "address" }], "name": "users", "outputs": [{ "internalType": "uint256", "name": "initialDeposit", "type": "uint256" }, { "internalType": "uint256", "name": "userDeposit", "type": "uint256" }, { "internalType": "uint256", "name": "miners", "type": "uint256" }, { "internalType": "uint256", "name": "claimedEggs", "type": "uint256" }, { "internalType": "uint256", "name": "totalLotteryBonus", "type": "uint256" }, { "internalType": "uint256", "name": "lastHatch", "type": "uint256" }, { "internalType": "address", "name": "referrer", "type": "address" }, { "internalType": "uint256", "name": "referralsCount", "type": "uint256" }, { "internalType": "uint256", "name": "referralEggRewards", "type": "uint256" }, { "internalType": "uint256", "name": "totalWithdrawn", "type": "uint256" }, { "internalType": "uint256", "name": "dailyCompoundBonus", "type": "uint256" }, { "internalType": "uint256", "name": "withdrawCount", "type": "uint256" }, { "internalType": "uint256", "name": "lastWithdrawTime", "type": "uint256" }], "stateMutability": "view", "type": "function" }]
+const tokenAbi = [{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":true,"name":"owner","type":"address"},{"indexed":true,"name":"spender","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"from","type":"address"},{"indexed":true,"name":"to","type":"address"},{"indexed":false,"name":"value","type":"uint256"}],"name":"Transfer","type":"event"}]
+const minerAbi = [{"inputs":[{"internalType":"address payable","name":"_owner","type":"address"},{"internalType":"address payable","name":"_project","type":"address"},{"internalType":"address payable","name":"_partner","type":"address"},{"internalType":"address payable","name":"_marketing","type":"address"},{"internalType":"address payable","name":"_buyback","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"investor","type":"address"},{"indexed":false,"internalType":"uint256","name":"pot","type":"uint256"},{"indexed":true,"internalType":"uint256","name":"round","type":"uint256"}],"name":"LotteryWinner","type":"event"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"BONUS_COMPOUND_STEP","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"BONUS_DAILY_COMPOUND","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"BONUS_DAILY_COMPOUND_BONUS_MAX_TIMES","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"BUYBACK","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"value","type":"address"}],"name":"CHANGE_MARKETING","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"value","type":"address"}],"name":"CHANGE_OWNERSHIP","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"value","type":"address"}],"name":"CHANGE_PARTNER","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"value","type":"address"}],"name":"CHANGE_PROJECT","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"COMPOUND_BONUS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COMPOUND_BONUS_MAX_TIMES","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COMPOUND_SPECIAL_BONUS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"COMPOUND_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"CUTOFF_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"DISABLE_LOTTERY","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"EGGS_TO_HIRE_1MINERS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"EGGS_TO_HIRE_1MINERS_COMPOUND","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"ENABLE_LOTTERY","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"EVENT_MAX_LOTTERY_TICKET","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY_ACTIVATED","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY_PERCENT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY_START_TIME","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY_STEP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"LOTTERY_TICKET_PRICE","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MARKETING","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MARKET_EGGS_DIVISOR","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MARKET_EGGS_DIVISOR_SELL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_LOTTERY_PARTICIPANTS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MAX_LOTTERY_TICKET","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"MIN_INVEST","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PARTNER","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"PERCENTS_DIVIDER","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_EGGS_TO_HIRE_1MINERS","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_EGGS_TO_HIRE_1MINERS_COMPOUND","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_LOTTERY","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_MARKETING","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_MARKET_EGGS_DIVISOR","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_MARKET_EGGS_DIVISOR_SELL","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_PARTNER","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_PROJECT","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"PRC_REFERRAL","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"PROJECT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bool","name":"value","type":"bool"},{"internalType":"uint256","name":"addCompoundBonus","type":"uint256"},{"internalType":"uint256","name":"addReferralEvent","type":"uint256"},{"internalType":"uint256","name":"addMaxTicket","type":"uint256"}],"name":"PROMO_EVENT_SPECIAL","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"PSNS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"REFERRAL","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"REFERRAL_EVENT_BONUS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_BONUS","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_CUTOFF_STEP","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_INVEST_MIN","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_LOTTERY_PERCENT","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_LOTTERY_STEP","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_LOTTERY_TICKET_PRICE","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_MAX_LOTTERY_PARTICIPANTS","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_MAX_LOTTERY_TICKET","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_WALLET_DEPOSIT_LIMIT","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_WITHDRAWAL_TAX","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_WITHDRAW_COOLDOWN","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_WITHDRAW_DAYS_TAX","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"value","type":"uint256"}],"name":"SET_WITHDRAW_LIMIT","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"WALLET_DEPOSIT_LIMIT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WITHDRAWAL_TAX","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WITHDRAWAL_TAX_DAYS","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WITHDRAW_COOLDOWN","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"WITHDRAW_LIMIT","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"ref","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"buyEggs","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[],"name":"buyback","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"eth","type":"uint256"},{"internalType":"uint256","name":"contractBalance","type":"uint256"}],"name":"calculateEggBuy","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"eth","type":"uint256"}],"name":"calculateEggBuySimple","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"eggs","type":"uint256"}],"name":"calculateEggSell","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"eggs","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"calculateEggSellForYield","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"rt","type":"uint256"},{"internalType":"uint256","name":"rs","type":"uint256"},{"internalType":"uint256","name":"bs","type":"uint256"}],"name":"calculateTrade","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"chooseWinner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"contractStarted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"currentPot","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_adr","type":"address"}],"name":"getAvailableEarnings","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getBalance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_adr","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"getDailyCompoundBonus","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"adr","type":"address"}],"name":"getEggsSinceLastHatch","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"getEggsYield","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"eggValue","type":"uint256"}],"name":"getFees","outputs":[{"internalType":"uint256","name":"_projectFee","type":"uint256"},{"internalType":"uint256","name":"_partnerFee","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getLotteryHistory","outputs":[{"internalType":"uint256","name":"round","type":"uint256"},{"internalType":"address","name":"winnerAddress","type":"address"},{"internalType":"uint256","name":"pot","type":"uint256"},{"internalType":"uint256","name":"totalLotteryParticipants","type":"uint256"},{"internalType":"uint256","name":"totalLotteryTickets","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLotteryInfo","outputs":[{"internalType":"uint256","name":"lotteryStartTime","type":"uint256"},{"internalType":"uint256","name":"lotteryStep","type":"uint256"},{"internalType":"uint256","name":"lotteryCurrentPot","type":"uint256"},{"internalType":"uint256","name":"lotteryParticipants","type":"uint256"},{"internalType":"uint256","name":"maxLotteryParticipants","type":"uint256"},{"internalType":"uint256","name":"totalLotteryTickets","type":"uint256"},{"internalType":"uint256","name":"lotteryTicketPrice","type":"uint256"},{"internalType":"uint256","name":"maxLotteryTicket","type":"uint256"},{"internalType":"uint256","name":"lotteryPercent","type":"uint256"},{"internalType":"uint256","name":"round","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLotteryTimer","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getMyEggs","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getMyMiners","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getSiteInfo","outputs":[{"internalType":"uint256","name":"_totalStaked","type":"uint256"},{"internalType":"uint256","name":"_totalDeposits","type":"uint256"},{"internalType":"uint256","name":"_totalCompound","type":"uint256"},{"internalType":"uint256","name":"_totalRefBonus","type":"uint256"},{"internalType":"uint256","name":"_totalLotteryBonus","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getTimeStamp","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_adr","type":"address"}],"name":"getUserInfo","outputs":[{"internalType":"uint256","name":"_initialDeposit","type":"uint256"},{"internalType":"uint256","name":"_userDeposit","type":"uint256"},{"internalType":"uint256","name":"_miners","type":"uint256"},{"internalType":"uint256","name":"_claimedEggs","type":"uint256"},{"internalType":"uint256","name":"_totalLotteryBonus","type":"uint256"},{"internalType":"uint256","name":"_lastHatch","type":"uint256"},{"internalType":"address","name":"_referrer","type":"address"},{"internalType":"uint256","name":"_referrals","type":"uint256"},{"internalType":"uint256","name":"_totalWithdrawn","type":"uint256"},{"internalType":"uint256","name":"_referralEggRewards","type":"uint256"},{"internalType":"uint256","name":"_dailyCompoundBonus","type":"uint256"},{"internalType":"uint256","name":"_lastWithdrawTime","type":"uint256"},{"internalType":"uint256","name":"_withdrawCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_userAddress","type":"address"}],"name":"getUserTickets","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_addr","type":"address"},{"internalType":"uint256","name":"value","type":"uint256"}],"name":"hatchEgg","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bool","name":"isCompound","type":"bool"}],"name":"hatchEggs","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"lotteryRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"marketEggs","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"marketing","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"uint256","name":"","type":"uint256"}],"name":"participantAdresses","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"participants","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"partner","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"project","outputs":[{"internalType":"address payable","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"sellEggs","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"specialEventBonus","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"address","name":"","type":"address"}],"name":"ticketOwners","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"token_BUSD","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalCompound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalDeposits","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalLotteryBonus","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRefBonus","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalStaked","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalTickets","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalWithdrawn","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"users","outputs":[{"internalType":"uint256","name":"initialDeposit","type":"uint256"},{"internalType":"uint256","name":"userDeposit","type":"uint256"},{"internalType":"uint256","name":"miners","type":"uint256"},{"internalType":"uint256","name":"claimedEggs","type":"uint256"},{"internalType":"uint256","name":"totalLotteryBonus","type":"uint256"},{"internalType":"uint256","name":"lastHatch","type":"uint256"},{"internalType":"address","name":"referrer","type":"address"},{"internalType":"uint256","name":"referralsCount","type":"uint256"},{"internalType":"uint256","name":"referralEggRewards","type":"uint256"},{"internalType":"uint256","name":"totalWithdrawn","type":"uint256"},{"internalType":"uint256","name":"dailyCompoundBonus","type":"uint256"},{"internalType":"uint256","name":"withdrawCount","type":"uint256"},{"internalType":"uint256","name":"lastWithdrawTime","type":"uint256"}],"stateMutability":"view","type":"function"}]
+
 
 // ------ contract calls
 
@@ -65,7 +66,7 @@ async function connect() {
             currentAddr = accounts[0];
             if (currentAddr !== null) {
                 myReferralLink(currentAddr)
-                console.log('Wallet connected = ' + currentAddr)
+                console.log('Wallet connected = '+ currentAddr)
 
                 loadContracts()
                 refreshData()
@@ -93,7 +94,7 @@ async function loadWeb3() {
         $('#enableMetamask').attr('disabled', false)
         if (window.ethereum.selectedAddress !== null) {
             await connect();
-            setTimeout(function () {
+                setTimeout(function () {
                 controlLoop()
                 controlLoopFaster()
             }, 1000)
@@ -101,61 +102,6 @@ async function loadWeb3() {
     } else {
         $('#enableMetamask').attr('disabled', true)
     }
-}
-
-async function calcNumTokens(tokensToSell) {
-    if (tokensToSell == 0) {
-        return 0;
-    }
-    let bnbPrice = await calcBNBPrice();
-    let priceInBnb = await calcSell(tokensToSell, tokenAddress)
-    var tokenPrice = priceInBnb * bnbPrice;
-    if (tokenPrice < 1) {
-        return parseFloat(tokenPrice).toFixed(7)
-    }
-    return tokenPrice.toFixed(2)
-}
-
-async function calcBNBPrice() {
-    const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" //BNB
-    const USDTokenAddress = "0x55d398326f99059fF775485246999027B3197955" //USDT
-    let bnbToSell = web3.utils.toWei("1", "ether");
-    let amountOut;
-    try {
-        let router = await new web3.eth.Contract(pancakeSwapAbi, pancakeSwapContract);
-        amountOut = await router.methods.getAmountsOut(bnbToSell, [BNBTokenAddress, USDTokenAddress]).call();
-        amountOut = web3.utils.fromWei(amountOut[1]);
-    } catch (error) { }
-    if (!amountOut) return 0;
-    return amountOut;
-}
-
-async function calcSell(tokensToSell, tokenAddres) {
-    const BNBTokenAddress = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c" //BNB
-
-    let tokenRouter = await new web3.eth.Contract(tokenAbi, tokenAddres);
-    let tokenDecimals = await tokenRouter.methods.decimals().call();
-
-    tokensToSell = setDecimals(tokensToSell, tokenDecimals);
-    let amountOut;
-    try {
-        let router = await new web3.eth.Contract(pancakeSwapAbi, pancakeSwapContract);
-        amountOut = await router.methods.getAmountsOut(tokensToSell, [tokenAddres, BNBTokenAddress]).call();
-        amountOut = web3.utils.fromWei(amountOut[1]);
-    } catch (error) { }
-
-    if (!amountOut) return 0;
-    return amountOut;
-}
-
-function setDecimals(number, decimals) {
-    number = number.toString();
-    let numberAbs = number.split('.')[0]
-    let numberDecimals = number.split('.')[1] ? number.split('.')[1] : '';
-    while (numberDecimals.length < decimals) {
-        numberDecimals += "0";
-    }
-    return numberAbs + numberDecimals;
 }
 
 window.addEventListener('load', function () {
@@ -177,7 +123,7 @@ function controlLoopFaster() {
 }
 
 function roundNum(num) {
-    if (num == 0) { return 0 };
+    if (num == 0) { return 0};
     if (num < 1) {
         return parseFloat(num).toFixed(4)
     }
@@ -186,12 +132,12 @@ function roundNum(num) {
 
 function refreshData() {
     console.log('Refreshing data...')
-    try {
-        tokenPrice(function (busdPrice) {
-            var priceJson = JSON.parse(busdPrice)
-            priceInUSD = +priceJson['pancakeswap-token']['usd'];
-        });
-    } catch { priceInUSD = 0; }
+    // try {
+    //     tokenPrice(function(busdPrice){
+    //         var priceJson = JSON.parse(busdPrice)
+    //         priceInUSD = +priceJson['binancecoin']['usd'];
+    //     });
+    // } catch { priceInUSD = 0; }
 
     contract.methods.EGGS_TO_HIRE_1MINERS().call().then(eggs => {
         eggstohatch1 = eggs
@@ -233,7 +179,7 @@ function refreshData() {
 
     contract.methods.COMPOUND_BONUS_MAX_TIMES().call().then(r => {
         compoundMaxDays = r;
-        var maxCompoundPercent = r * compoundPercent;
+        var maxCompoundPercent = r*compoundPercent;
         $("#max-compound").html(`+${maxCompoundPercent}%`)
     }).catch((err) => {
         console.log(err);
@@ -256,9 +202,9 @@ function refreshData() {
         let amt = web3.utils.fromWei(userBalance);
         usrBal = userBalance;
         $('#user-balance').html(roundNum(amt))
-        calcNumTokens(roundNum(amt)).then(usdValue => {
-            $('#user-balance-usd').html(roundNum(usdValue))
-        })
+        // calcNumTokens(roundNum(amt)).then(usdValue => {
+        //     $('#user-balance-usd').html(roundNum(usdValue))
+        // })
     }).catch((err) => {
         console.log(err)
     });
@@ -267,9 +213,9 @@ function refreshData() {
         spend = web3.utils.fromWei(result)
         if (spend > 0 && started) {
             $('#user-approved-spend').html(roundNum(spend));
-            calcNumTokens(spend).then(usdValue => {
-                $('#user-approved-spend-usd').html(usdValue)
-            })
+            // calcNumTokens(spend).then(usdValue => {
+            //     $('#user-approved-spend-usd').html(usdValue)
+            // })
             $("#buy-eggs-btn").attr('disabled', false);
             $("#busd-spend").attr('hidden', false);
             $("#busd-spend").attr('value', "10");
@@ -279,7 +225,7 @@ function refreshData() {
     });
 
 
-    /** How many miners and eggs per day user will recieve for 10 WALT deposit **/
+    /** How many miners and eggs per day user will recieve for 10 BUSD deposit **/
     contract.methods.getEggsYield(web3.utils.toWei('10')).call().then(result => {
         var miners = result[0];
         var busd = result[1];
@@ -287,8 +233,8 @@ function refreshData() {
 
         $("#example-miners").html(miners)
         $("#example-busd").html(roundNum(amt))
-        var usd = Number(priceInUSD * amt).toFixed(2);
-        $("#example-usd").html(usd)
+        // var usd = Number(priceInUSD*amt).toFixed(2);
+        // $("#example-usd").html(usd)
     }).catch((err) => {
         console.log(err);
     });
@@ -298,8 +244,8 @@ function refreshData() {
             contractBalance = balance;
             var amt = web3.utils.fromWei(balance);
             $('#contract-balance').html(roundNum(amt));
-            var usd = Number(priceInUSD * amt).toFixed(2);
-            $("#contract-balance-usd").html(usd)
+            // var usd = Number(priceInUSD*amt).toFixed(2);
+            // $("#contract-balance-usd").html(usd)
         }).catch((err) => {
             console.log(err);
         });
@@ -307,29 +253,29 @@ function refreshData() {
         contract.methods.getSiteInfo().call().then(result => {
             var staked = web3.utils.fromWei(result._totalStaked);
             $('#total-staked').html(roundNum(staked));
-            var stakedUSD = Number(priceInUSD * staked).toFixed(2);
-            $("#total-staked-usd").html(stakedUSD)
+            // var stakedUSD = Number(priceInUSD*staked).toFixed(2);
+            // $("#total-staked-usd").html(stakedUSD)
             $('#total-players').html(result._totalDeposits);
             var ref = result._totalRefBonus;
             if (ref > 0) {
                 var refBUSD = readableBUSD(ref, 2);
                 $("#total-ref").html(refBUSD);
-                var refUSD = Number(priceInUSD * refBUSD).toFixed(2);
-                $('#total-ref-usd').html(refUSD)
+                // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
+                // $('#total-ref-usd').html(refUSD)
             }
-         }).catch((err) => {
+        }).catch((err) => {
             console.log(err);
         });
     }
-    web3.eth.getBalance(currentAddr).then(userBalance => {
-        usrBal = userBalance;
-        var amt = web3.utils.fromWei(userBalance);
-        $("#user-balance").html(roundNum(amt));
-        var usd = Number(priceInUSD * amt).toFixed(2);
-        // $("#user-balance-usd").html(usd)
-    }).catch((err) => {
-        console.log(err);
-    });
+    // web3.eth.getBalance(currentAddr).then(userBalance => {
+    //     usrBal = userBalance;
+    //     var amt = web3.utils.fromWei(userBalance);
+    //     $("#user-balance").html(roundNum(amt));
+    //     var usd = Number(priceInUSD*amt).toFixed(2);
+    //     $("#user-balance-usd").html(usd)
+    // }).catch((err) => {
+    //     console.log(err);
+    // });
 
     contract.methods.getUserInfo(currentAddr).call().then(user => {
         var initialDeposit = user._initialDeposit;
@@ -385,8 +331,8 @@ function refreshData() {
             contract.methods.getAvailableEarnings(currentAddr).call().then(function (earnings) {
                 var busdMined = readableBUSD(earnings, 4)
                 $("#mined").html(busdMined);
-                var minedUsd = Number(priceInUSD * busdMined).toFixed(2);
-                $('#mined-usd').html(minedUsd)
+                // var minedUsd = Number(priceInUSD*busdMined).toFixed(2);
+                // $('#mined-usd').html(minedUsd)
             });
         } else {
             $("#mined").html(0);
@@ -395,8 +341,8 @@ function refreshData() {
         if (referralEggRewards > 0) {
             var refBUSD = readableBUSD(referralEggRewards, 2);
             $("#ref-rewards-busd").html(refBUSD);
-            var refUSD = Number(priceInUSD * refBUSD).toFixed(2);
-            $('#ref-rewards-usd').html(refUSD)
+            // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
+            // $('#ref-rewards-usd').html(refUSD)
             $('#ref-count').html(referrals);
         } else {
             $("#ref-rewards").html("0".concat(' '.concat('Miners')));
@@ -406,8 +352,8 @@ function refreshData() {
             contract.methods.calculateEggSell(totalLotteryBonus).call().then(function (refRewards) {
                 var lotteryBUSD = readableBUSD(refRewards, 2);
                 $("#lottery-rewards-busd").html(lotteryBUSD);
-                var lotteryUSD = Number(priceInUSD * lotteryBUSD).toFixed(2);
-                $('#lottery-rewards-usd').html(lotteryUSD)
+                // var lotteryUSD = Number(priceInUSD*lotteryBUSD).toFixed(2);
+                // $('#lottery-rewards-usd').html(lotteryUSD)
             });
         }
         setInitialDeposit(initialDeposit);
@@ -416,18 +362,18 @@ function refreshData() {
 
 
         if (miners > 0) {
-            var eggsPerDay = 24 * 60 * 60 * miners;
+            var eggsPerDay = 24*60*60 * miners ;
             contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('100')).call().then(earnings => {
                 var eggsBUSD = readableBUSD(earnings, 4)
                 $("#eggs-per-day").html(eggsBUSD);
-                var eggsUSD = Number(priceInUSD * eggsBUSD).toFixed(2);
-                $('#eggs-per-day-usd').html(eggsUSD)
+                // var eggsUSD = Number(priceInUSD*eggsBUSD).toFixed(2);
+                // $('#eggs-per-day-usd').html(eggsUSD)
             });
         }
 
         if (withdrawCount >= 1) {
             contract.methods.WITHDRAWAL_TAX().call().then(tax => {
-                $("#withdraw-tax").html(`(-${tax / 10}% tax)`)
+                $("#withdraw-tax").html(`(-${tax/10}% tax)`)
             })
         } else {
             $('#withdraw-tax').attr('hidden', true)
@@ -439,27 +385,27 @@ function refreshData() {
     contract.methods.getLotteryInfo().call().then(result => {
         var round = result.round;
         if (round) {
-            $("#lottery-round").text(`Round ${+round + 1}`);
+            $("#lottery-round").text(`Round ${+round+1}`);
             contract.methods.ticketOwners(round, currentAddr).call().then(numTix => {
                 if (numTix && numTix > 0) {
                     var max = result.maxLotteryTicket;
                     var totalTickets = result.totalLotteryTickets;
-                    $("#lotto-chance").html(`${(numTix / totalTickets * 100).toFixed(2)}%`);
+                    $("#lotto-chance").html(`${(numTix/totalTickets*100).toFixed(2)}%`);
                     $("#your-tickets").html(numTix);
-                    $("#max-user-tickets").html(max - numTix);
+                    $("#max-user-tickets").html(max-numTix);
                 }
             }).catch((err) => {
                 console.log(err)
             });
             if (round >= 1) {
-                contract.methods.getLotteryHistory(round - 1).call().then(winner => {
+                contract.methods.getLotteryHistory(round-1).call().then(winner => {
                     var winnerAddress = winner.winnerAddress;
                     let shortenedAddr = winnerAddress.replace(winnerAddress.substring(6, 38), "***")
                     $("#previous-winner").html(shortenedAddr.toLowerCase());
                     var prevPotBUSD = readableBUSD(winner.pot, 4);
                     $("#previous-pot-busd").html(prevPotBUSD);
-                    var prevPotUSD = Number(priceInUSD * prevPotBUSD).toFixed(2);
-                    $("#previous-pot-usd").html(prevPotUSD);
+                    // var prevPotUSD = Number(priceInUSD*prevPotBUSD).toFixed(2);
+                    // $("#previous-pot-usd").html(prevPotUSD);
                 }).catch((err) => {
                     console.log(err)
                 });
@@ -471,25 +417,25 @@ function refreshData() {
         var currentPot = result.lotteryCurrentPot;
         var amt = web3.utils.fromWei(currentPot)
         $("#lottery-pot").html(roundNum(amt));
-        var potUSD = Number(priceInUSD * amt).toFixed(2);
-        $('#lottery-pot-usd').html(roundNum(potUSD))
+        // var potUSD = Number(priceInUSD*amt).toFixed(2);
+        // $('#lottery-pot-usd').html(roundNum(potUSD))
 
         var start = result.lotteryStartTime;
-        const dateStart = new Date(start * 1000).toLocaleString();
+        const dateStart = new Date(start*1000).toLocaleString();
 
         $("#lottery-start").html(dateStart);
         var step = result.lotteryStep;
         var numStart = +start;
         var numStep = +step;
-        const dateEnd = new Date((numStart + numStep) * 1000).toLocaleString();
+        const dateEnd = new Date((numStart+numStep)*1000).toLocaleString();
         $("#lottery-end").html(dateEnd);
 
         var lotteryPrice = result.lotteryTicketPrice;
         if (lotteryPrice) {
             var _price = web3.utils.fromWei(lotteryPrice);
             $("#ticket-price").html(roundNum(_price))
-            var ticketUSD = Number(priceInUSD * _price).toFixed(2);
-            $('#ticket-price-usd').html(roundNum(ticketUSD))
+            // var ticketUSD = Number(priceInUSD*_price).toFixed(2);
+            // $('#ticket-price-usd').html(roundNum(ticketUSD))
         }
     }).catch((err) => {
         console.log(err)
@@ -520,23 +466,23 @@ function getQueryVariable(variable) {
 function setInitialDeposit(initialDeposit) {
     totalDeposits = initialDeposit;
     var initialBUSD = readableBUSD(initialDeposit, 2);
-    var initialUSD = Number(priceInUSD * initialBUSD).toFixed(2);
+    // var initialUSD = Number(priceInUSD*initialBUSD).toFixed(2);
     $("#initial-deposit").html(initialBUSD);
-    $("#initial-deposit-usd").html(initialUSD);
+    // $("#initial-deposit-usd").html(initialUSD);
 }
 
 function setTotalDeposit(totalDeposit) {
     var totalBUSD = readableBUSD(totalDeposit, 2);
-    var totalUSD = Number(priceInUSD * totalBUSD).toFixed(2);
+    // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
     $("#total-deposit").html(totalBUSD);
-    $("#total-deposit-usd").html(totalUSD);
+    // $("#total-deposit-usd").html(totalUSD);
 }
 
 function setTotalWithdrawn(totalWithdrawn) {
     var totalBUSD = readableBUSD(totalWithdrawn, 2);
-    var totalUSD = Number(priceInUSD * totalBUSD).toFixed(2);
+    // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
     $("#total-withdrawn").html(totalBUSD);
-    $("#total-withdrawn-usd").html(totalUSD);
+    // $("#total-withdrawn-usd").html(totalUSD);
 }
 
 var x;
@@ -554,7 +500,7 @@ function setCompoundTimer(lastHatch) {
 
         // Time calculations for days, hours, minutes and seconds
         var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days * 24);
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days*24);
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -576,18 +522,18 @@ function setCompoundTimer(lastHatch) {
 let y;
 function setCutoffTimer(lastHatch) {
     var time = new Date().getTime();
-    var cutoff = (+lastHatch + +cutoffStep) - (+time / 1000);
+    var cutoff = (+lastHatch + +cutoffStep) - (+time/1000);
     var countDownDate = new Date(+time + +cutoff * 1000).getTime();
 
     clearInterval(y)
-    y = setInterval(function () {
+    y = setInterval(function() {
         var currentTime = new Date().getTime();
         // Find the distance between now and the count down date
         var distance = countDownDate - currentTime;
 
         // Time calculations for days, hours, minutes and seconds
         var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days * 24);
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days*24);
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -612,14 +558,14 @@ function setCooldownTimer(cooldown) {
     var endDate = new Date(+time + +cooldown * 1000).getTime();
 
     clearInterval(z)
-    z = setInterval(function () {
+    z = setInterval(function() {
         var currTime = new Date().getTime();
 
         // Find the distance between now and the count down date
         var distance = endDate - currTime;
         // Time calculations for days, hours, minutes and seconds
         var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days * 24);
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)  + days*24);
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -643,14 +589,14 @@ function setStartTimer() {
     var endDate = new Date('December 15, 2021 7:00 EST').getTime();
 
     clearInterval(startTimeInterval)
-    startTimeInterval = setInterval(function () {
+    startTimeInterval = setInterval(function() {
         var currTime = new Date().getTime();
 
         // Find the distance between now and the count down date
         var distance = endDate - currTime;
         // Time calculations for days, hours, minutes and seconds
         var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60) + days * 24);
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)  + days*24);
         var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -675,7 +621,7 @@ function updateBuyPrice(busd) {
         busd = document.getElementById('busd-spend').value;
     }
     contract.methods.calculateEggBuySimple(web3.utils.toWei(busd)).call().then(eggs => {
-        $("#eggs-to-buy").html(parseFloat(eggs / eggstohatch1).toFixed(2));
+        $("#eggs-to-buy").html(parseFloat(eggs/eggstohatch1).toFixed(2));
     });
 }
 
@@ -696,7 +642,7 @@ function approve(_amount) {
             refreshData();
         }
 
-    }).catch((err) => {
+    }).catch((err)=> {
         console.log(err)
     });
 }
@@ -708,17 +654,17 @@ function approveMiner() {
 }
 
 
-function buyEggs() {
+function buyEggs(){
     var spendDoc = document.getElementById('busd-spend')
     var busd = spendDoc.value;
 
     var amt = web3.utils.toWei(busd);
-    if (+amt + +totalDeposits > +maxDeposit) {
-        alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
+	if(+amt + +totalDeposits > +maxDeposit) {
+		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
         return
     }
-    if (+amt > usrBal) {
-        alert("you do not have " + busd + " WALT in your wallet");
+    if(+amt > usrBal) {
+		alert("you do not have " + busd + " WALT in your wallet");
         return
     }
     if (+spend < +busd) {
@@ -738,24 +684,24 @@ function buyEggs() {
     }
 }
 
-function hatchEggs() {
+function hatchEggs(){
     if (canSell) {
         canSell = false;
         console.log(currentAddr)
-        contract.methods.hatchEggs(true).send({ from: currentAddr }).then(result => {
+        contract.methods.hatchEggs(true).send({ from: currentAddr}).then(result => {
             refreshData()
         }).catch((err) => {
             console.log(err)
         });
-        setTimeout(function () {
+        setTimeout(function(){
             canSell = true;
-        }, 10000);
+        },10000);
     } else {
         console.log('Cannot hatch yet...')
     }
 }
 
-function sellEggs() {
+function sellEggs(){
     if (canSell) {
         canSell = false;
         console.log('Selling');
@@ -764,15 +710,15 @@ function sellEggs() {
         }).catch((err) => {
             console.log(err)
         });
-        setTimeout(function () {
+        setTimeout(function(){
             canSell = true;
-        }, 10000);
+        },10000);
     } else {
         console.log('Cannot sell yet...')
     }
 }
 
-function devFee(amount, callback) {
+function devFee(amount, callback){
     contract.methods.getFees(amount).call().then(result => {
         var projectFee = result._projectFee;
         var marketingFee = result._marketingFee;
@@ -782,7 +728,7 @@ function devFee(amount, callback) {
     });
 }
 
-function getBalance(callback) {
+function getBalance(callback){
     contract.methods.getBalance().call().then(result => {
         callback(result);
     }).catch((err) => {
@@ -791,12 +737,12 @@ function getBalance(callback) {
 }
 
 function tokenPrice(callback) {
-    const url = "https://api.coingecko.com/api/v3/simple/price?ids=pancakeswap-token&vs_currencies=usd";
-    httpGetAsync(url, callback);
+	const url = "https://api.coingecko.com/api/v3/simple/price?ids=binanceusd&vs_currencies=usd";
+	httpGetAsync(url,callback);
 }
 function httpGetAsync(theUrl, callback) {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function () {
+    xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
@@ -805,5 +751,5 @@ function httpGetAsync(theUrl, callback) {
 }
 
 function readableBUSD(amount, decimals) {
-    return (amount / 1e18).toFixed(decimals);
+  return (amount / 1e18).toFixed(decimals);
 }
