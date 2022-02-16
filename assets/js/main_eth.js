@@ -685,5 +685,5 @@ function httpGetAsync(theUrl, callback) {
 }
 
 function readableBUSD(amount, decimals) {
-  return (amount / 1e18).toFixed(decimals);
+  return (amount / 1e9).toFixed(decimals);
 }
