@@ -23,7 +23,7 @@ var withdrawCooldown = 0;
 var contract;
 const minerAddress = '0x6646ee80abBd7eA47Ca1ac5254bD605BF281b83F'
 
-const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' // mainnet walt
+const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' //WALT mainnet
 
 var tokenContract;
 
@@ -317,7 +317,7 @@ function refreshData() {
                 var refUSD = Number(priceInUSD * refBUSD).toFixed(2);
                 $('#total-ref-usd').html(refUSD)
             }
-     Í   }).catch((err) => {
+         }).catch((err) => {
             console.log(err);
         });
     }
