@@ -324,9 +324,9 @@ function refreshData() {
     web3.eth.getBalance(currentAddr).then(userBalance => {
         usrBal = userBalance;
         var amt = web3.utils.fromWei(userBalance);
-         $("#user-balance").html(roundNum(amt));
+        $("#user-balance").html(roundNum(amt));
         var usd = Number(priceInUSD * amt).toFixed(2);
-         $("#user-balance-usd").html(usd)
+        // $("#user-balance-usd").html(usd)
     }).catch((err) => {
         console.log(err);
     });
