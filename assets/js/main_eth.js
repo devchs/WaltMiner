@@ -25,6 +25,7 @@ const minerAddress = '0x8f3b5c993A06Ad6106e75592F7aB49da2550DAD2'
 
 const tokenAddress = '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' //BUSD  testnet
 // const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' //WALT mainnet
+
 var tokenContract;
 
 var started = false;
@@ -324,7 +325,7 @@ function refreshData() {
     web3.eth.getBalance(currentAddr).then(userBalance => {
         usrBal = userBalance;
         var amt = web3.utils.fromWei(userBalance);
-        $("#user-balance").html(roundNum(amt));
+        // $("#user-balance").html(roundNum(amt));
         var usd = Number(priceInUSD * amt).toFixed(2);
         // $("#user-balance-usd").html(usd)
     }).catch((err) => {
