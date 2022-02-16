@@ -21,10 +21,10 @@ var cutoffStep=0;
 var withdrawCooldown=0;
 
 var contract;
-const minerAddress = '0x6646ee80abBd7eA47Ca1ac5254bD605BF281b83F'
+const minerAddress = '0x8f3b5c993a06ad6106e75592f7ab49da2550dad2'
 
-const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' //WALT mainnet
-
+const tokenAddress = '0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7' //BUSD testnet
+// const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' //WALT mainnet
 var tokenContract;
 
 var started = false;
