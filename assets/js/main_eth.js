@@ -210,7 +210,7 @@ function refreshData() {
     });
 
     tokenContract.methods.allowance(currentAddr, minerAddress).call().then(result => {
-        spend = web3.utils.fromWei(result)
+        spend = web3.utils.fromWei(result, 'gwei')
         if (spend > 0 && started) {
             $('#user-approved-spend').html(roundNum(spend));
             // calcNumTokens(spend).then(usdValue => {
@@ -226,7 +226,8 @@ function refreshData() {
 
 
     /** How many miners and eggs per day user will recieve for 10 WALT deposit **/
-    contract.methods.getEggsYield(web3.utils.toWei('10')).call().then(result => {
+	
+    contract.methods.getEggsYield(web3.utils.toWei('10', 'gwei')).call().then(result => {
         var miners = result[0];
         var busd = result[1];
         var amt = readableBUSD(busd, 4);
@@ -242,7 +243,7 @@ function refreshData() {
     if (started) {
         contract.methods.getBalance().call().then(balance => {
             contractBalance = balance;
-            var amt = web3.utils.fromWei(balance);
+            var amt = web3.utils.fromWei(balance, 'gwei')
             $('#contract-balance').html(roundNum(amt));
             // var usd = Number(priceInUSD*amt).toFixed(2);
             // $("#contract-balance-usd").html(usd)
@@ -251,7 +252,7 @@ function refreshData() {
         });
 
         contract.methods.getSiteInfo().call().then(result => {
-            var staked = web3.utils.fromWei(result._totalStaked);
+            var staked = web3.utils.fromWei(result._totalStaked, 'gwei');
             $('#total-staked').html(roundNum(staked));
             // var stakedUSD = Number(priceInUSD*staked).toFixed(2);
             // $("#total-staked-usd").html(stakedUSD)
@@ -354,7 +355,7 @@ function refreshData() {
 
         if (miners > 0) {
             var eggsPerDay = 24*60*60 * miners ;
-            contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('100')).call().then(earnings => {
+            contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('100', 'gwei')).call().then(earnings => {
                 var eggsBUSD = readableBUSD(earnings, 4)
                 $("#eggs-per-day").html(eggsBUSD);
                 // var eggsUSD = Number(priceInUSD*eggsBUSD).toFixed(2);
@@ -553,7 +554,7 @@ function updateBuyPrice(busd) {
     if (busd == undefined || !busd) {
         busd = document.getElementById('busd-spend').value;
     }
-    contract.methods.calculateEggBuySimple(web3.utils.toWei(busd)).call().then(eggs => {
+    contract.methods.calculateEggBuySimple(web3.utils.toWei(busd, 'gwei')).call().then(eggs => {
         $("#eggs-to-buy").html(parseFloat(eggs/eggstohatch1).toFixed(2));
     });
 }
@@ -566,7 +567,7 @@ function approve(_amount) {
     else {
         amt = 0
     }
-    let _spend = web3.utils.toWei(amt.toString())
+    let _spend = web3.utils.toWei(amt.toString(), 'gwei')
     tokenContract.methods.approve(minerAddress, _spend).send({ from: currentAddr }).then(result => {
         if (result) {
             $('#busd-spend').attr('disabled', false);
@@ -591,7 +592,7 @@ function buyEggs(){
     var spendDoc = document.getElementById('busd-spend')
     var busd = spendDoc.value;
 
-    var amt = web3.utils.toWei(busd);
+    var amt = web3.utils.toWei(busd, 'gwei');
 	if(+amt + +totalDeposits > +maxDeposit) {
 		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
         return
