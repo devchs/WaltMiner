@@ -329,7 +329,7 @@ function refreshData() {
         if (miners > 0) {
             $("#your-miners").html(miners);
             contract.methods.getAvailableEarnings(currentAddr).call().then(function (earnings) {
-                var busdMined = readableBUSD(earnings, 4)
+                var busdMined = readableBUSD(earnings, 4, 1e9)
                 $("#mined").html(busdMined);
                 // var minedUsd = Number(priceInUSD*busdMined).toFixed(2);
                 // $('#mined-usd').html(minedUsd)
@@ -342,7 +342,7 @@ function refreshData() {
         }
 
         if (referralEggRewards > 0) {
-            var refBUSD = readableBUSD(referralEggRewards, 2);
+            var refBUSD = readableBUSD(referralEggRewards, 2, 1e9);
             $("#ref-rewards-busd").html(refBUSD);
             // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
             // $('#ref-rewards-usd').html(refUSD)
@@ -359,7 +359,7 @@ function refreshData() {
         if (miners > 0) {
             var eggsPerDay = 24*60*60 * miners ;
             contract.methods.calculateEggSellForYield(eggsPerDay, web3.utils.toWei('100', 'gwei')).call().then(earnings => {
-                var eggsBUSD = readableBUSD(earnings, 4)
+                var eggsBUSD = readableBUSD(earnings, 4, 1e9)
                 $("#eggs-per-day").html(eggsBUSD);
                 // var eggsUSD = Number(priceInUSD*eggsBUSD).toFixed(2);
                 // $('#eggs-per-day-usd').html(eggsUSD)
@@ -408,21 +408,21 @@ function getQueryVariable(variable) {
 
 function setInitialDeposit(initialDeposit) {
     totalDeposits = initialDeposit;
-    var initialBUSD = readableBUSD(initialDeposit, 2);
+    var initialBUSD = readableBUSD(initialDeposit, 2, 1e9);
     // var initialUSD = Number(priceInUSD*initialBUSD).toFixed(2);
     $("#initial-deposit").html(initialBUSD);
     // $("#initial-deposit-usd").html(initialUSD);
 }
 
 function setTotalDeposit(totalDeposit) {
-    var totalBUSD = readableBUSD(totalDeposit, 2);
+    var totalBUSD = readableBUSD(totalDeposit, 2, 1e9);
     // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
     $("#total-deposit").html(totalBUSD);
     // $("#total-deposit-usd").html(totalUSD);
 }
 
 function setTotalWithdrawn(totalWithdrawn) {
-    var totalBUSD = readableBUSD(totalWithdrawn, 2);
+    var totalBUSD = readableBUSD(totalWithdrawn, 2, 1e9);
     // var totalUSD = Number(priceInUSD*totalBUSD).toFixed(2);
     $("#total-withdrawn").html(totalBUSD);
     // $("#total-withdrawn-usd").html(totalUSD);
