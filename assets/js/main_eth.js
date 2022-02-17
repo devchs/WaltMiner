@@ -122,20 +122,12 @@ function controlLoopFaster() {
     setTimeout(controlLoopFaster, 30)
 }
 
-//function roundNum(num) {
- //   if (num == 0) { return 0};
-  //  if (num < 1) {
-  //      return parseFloat(num).toFixed(4)
-  //  }
- //   return parseFloat(parseFloat(num).toFixed(2));
-//}
-
-function roundNum(num) {
+function roundNum(num, fromDecimals = 1e9) {
     if (num == 0) { return 0};
     if (num < 1) {
-        return (parseFloat(num) * 1_000_000_000).toFixed(4)
+        return (parseFloat(num) * fromDecimals).toFixed(4)
     }
-    return (parseFloat(num) * 1_000_000_000).toFixed(2)
+    return (parseFloat(num) * fromDecimals).toFixed(2)
 }
 
 function refreshData() {
@@ -153,7 +145,7 @@ function refreshData() {
         var apr = dailyPercent * 365;
         $("#daily-rate").html(`${dailyPercent}% Daily ~ ${apr}% APR`);
     }).catch((err) => {
-        console.log(err);
+        console.log('EGGS_TO_HIRE_1MINERS', err);
     });
 
     contract.methods.COMPOUND_BONUS().call().then(r => {
@@ -161,20 +153,20 @@ function refreshData() {
         $("#daily-compound").html(`${compoundPercent}% Compound Bonus`)
         $("#compound-percent").html(`${compoundPercent}%`)
     }).catch((err) => {
-        console.log(err);
+        console.log('COMPOUND_BONUS', err);
     });
 
 
     contract.methods.CUTOFF_STEP().call().then(cutoff => {
         cutoffStep = cutoff;
     }).catch((err) => {
-        console.log(err);
+        console.log('CUTOFF_STEP', err);
     })
 
     contract.methods.WITHDRAW_COOLDOWN().call().then(cooldown => {
         withdrawCooldown = cooldown;
     }).catch((err) => {
-        console.log(err);
+        console.log('WITHDRAW_COOLDOWN', err);
     })
 
     contract.methods.REFERRAL().call().then(r => {
@@ -182,7 +174,7 @@ function refreshData() {
         $("#ref-bonus").html(`${refPercent}% Referrals`)
         $("#ref-percent").html(`${refPercent}%`)
     }).catch((err) => {
-        console.log(err);
+        console.log('REFERRAL', err);
     });
 
     contract.methods.COMPOUND_BONUS_MAX_TIMES().call().then(r => {
@@ -190,20 +182,20 @@ function refreshData() {
         var maxCompoundPercent = r*compoundPercent;
         $("#max-compound").html(`+${maxCompoundPercent}%`)
     }).catch((err) => {
-        console.log(err);
+        console.log('COMPOUND_BONUS_MAX_TIMES', err);
     });
 
     contract.methods.WALLET_DEPOSIT_LIMIT().call().then(busd => {
         maxDeposit = busd;
-        $("#max-deposit").html(`${readableBUSD(busd, 2)} WALT`)
+        $("#max-deposit").html(`${readableBUSD(busd, 2, 1e18)} WALT`)
     }).catch((err) => {
-        console.log(err);
+        console.log('WALLET_DEPOSIT_LIMIT', err);
     });
 
     contract.methods.COMPOUND_STEP().call().then(step => {
         compoundStep = step;
     }).catch((err) => {
-        console.log(err);
+        console.log('COMPOUND_STEP', err);
     });
 
     tokenContract.methods.balanceOf(currentAddr).call().then(userBalance => {
@@ -214,13 +206,13 @@ function refreshData() {
         //     $('#user-balance-usd').html(roundNum(usdValue))
         // })
     }).catch((err) => {
-        console.log(err)
+        console.log('balanceOf', err)
     });
 
     tokenContract.methods.allowance(currentAddr, minerAddress).call().then(result => {
         spend = web3.utils.fromWei(result, 'gwei')
         if (spend > 0 && started) {
-            $('#user-approved-spend').html(roundNum(spend));
+            $('#user-approved-spend').html((spend));
             // calcNumTokens(spend).then(usdValue => {
             //     $('#user-approved-spend-usd').html(usdValue)
             // })
@@ -229,7 +221,7 @@ function refreshData() {
             $("#busd-spend").attr('value', "10");
         }
     }).catch((err) => {
-        console.log(err)
+        console.log('allowance', err)
     });
 
 
@@ -245,7 +237,7 @@ function refreshData() {
         // var usd = Number(priceInUSD*amt).toFixed(2);
         // $("#example-usd").html(usd)
     }).catch((err) => {
-        console.log(err);
+        console.log('getEggsYield', err);
     });
 
     if (started) {
@@ -256,7 +248,7 @@ function refreshData() {
             // var usd = Number(priceInUSD*amt).toFixed(2);
             // $("#contract-balance-usd").html(usd)
         }).catch((err) => {
-            console.log(err);
+            console.log('getBalance', err);
         });
 
         contract.methods.getSiteInfo().call().then(result => {
@@ -273,7 +265,7 @@ function refreshData() {
                 // $('#total-ref-usd').html(refUSD)
             }
         }).catch((err) => {
-            console.log(err);
+            console.log('getSiteInfo', err);
         });
     }
     // web3.eth.getBalance(currentAddr).then(userBalance => {
@@ -341,6 +333,9 @@ function refreshData() {
                 $("#mined").html(busdMined);
                 // var minedUsd = Number(priceInUSD*busdMined).toFixed(2);
                 // $('#mined-usd').html(minedUsd)
+            }).catch((err) => {
+                console.log('getAvailableEarnings', err);
+                throw err;
             });
         } else {
             $("#mined").html(0);
@@ -368,18 +363,24 @@ function refreshData() {
                 $("#eggs-per-day").html(eggsBUSD);
                 // var eggsUSD = Number(priceInUSD*eggsBUSD).toFixed(2);
                 // $('#eggs-per-day-usd').html(eggsUSD)
+            }).catch((err) => {
+                console.log('calculateEggSellForYield', err);
+                throw err;
             });
         }
 
         if (withdrawCount >= 1) {
             contract.methods.WITHDRAWAL_TAX().call().then(tax => {
                 $("#withdraw-tax").html(`(-${tax/10}% tax)`)
-            })
+            }).catch((err) => {
+                console.log('WITHDRAWAL_TAX', err);
+                throw err;
+            });
         } else {
             $('#withdraw-tax').attr('hidden', true)
         }
     }).catch((err) => {
-        console.log(err);
+        console.log('getUserInfo', err);
     });
 	
     updateBuyPrice();
@@ -602,7 +603,7 @@ function buyEggs(){
 
     var amt = web3.utils.toWei(busd, 'gwei');
 	if(+amt + +totalDeposits > +maxDeposit) {
-		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2)} WALT`);
+		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2, 1e18)} WALT`);
         return
     }
     if(+amt > usrBal) {
@@ -692,6 +693,6 @@ function httpGetAsync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
-function readableBUSD(amount, decimals) {
-  return (amount / 1e9).toFixed(decimals);
+function readableBUSD(amount, decimals, fromDecimals = 1e18) {
+  return (amount / fromDecimals).toFixed(decimals);
 }
