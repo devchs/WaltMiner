@@ -259,7 +259,7 @@ function refreshData() {
             $('#total-players').html(result._totalDeposits);
             var ref = result._totalRefBonus;
             if (ref > 0) {
-                var refBUSD = readableBUSD(ref, 2);
+                var refBUSD = readableBUSD(ref, 2, 1e9);
                 $("#total-ref").html(refBUSD);
                 // var refUSD = Number(priceInUSD*refBUSD).toFixed(2);
                 // $('#total-ref-usd').html(refUSD)
@@ -695,4 +695,3 @@ function httpGetAsync(theUrl, callback) {
 
 function readableBUSD(amount, decimals, fromDecimals = 1e18) {
   return (amount / fromDecimals).toFixed(decimals);
-}
