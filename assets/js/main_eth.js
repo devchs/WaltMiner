@@ -187,7 +187,7 @@ function refreshData() {
 
     contract.methods.WALLET_DEPOSIT_LIMIT().call().then(busd => {
         maxDeposit = busd;
-        $("#max-deposit").html(`${readableBUSD(busd, 2, 1e18)} WALT`)
+        $("#max-deposit").html(`${readableBUSD(busd, 2, 1e9)} WALT`)
     }).catch((err) => {
         console.log('WALLET_DEPOSIT_LIMIT', err);
     });
@@ -244,7 +244,7 @@ function refreshData() {
         contract.methods.getBalance().call().then(balance => {
             contractBalance = balance;
             var amt = web3.utils.fromWei(balance, 'gwei')
-            $('#contract-balance').html(roundNum(amt));
+            $('#contract-balance').html(amt);
             // var usd = Number(priceInUSD*amt).toFixed(2);
             // $("#contract-balance-usd").html(usd)
         }).catch((err) => {
@@ -253,7 +253,7 @@ function refreshData() {
 
         contract.methods.getSiteInfo().call().then(result => {
             var staked = web3.utils.fromWei(result._totalStaked, 'gwei');
-            $('#total-staked').html(roundNum(staked));
+            $('#total-staked').html(staked);
             // var stakedUSD = Number(priceInUSD*staked).toFixed(2);
             // $("#total-staked-usd").html(stakedUSD)
             $('#total-players').html(result._totalDeposits);
