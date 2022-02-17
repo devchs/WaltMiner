@@ -695,3 +695,4 @@ function httpGetAsync(theUrl, callback) {
 
 function readableBUSD(amount, decimals, fromDecimals = 1e18) {
   return (amount / fromDecimals).toFixed(decimals);
+}
