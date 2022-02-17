@@ -230,7 +230,7 @@ function refreshData() {
     contract.methods.getEggsYield(web3.utils.toWei('10', 'gwei')).call().then(result => {
         var miners = result[0];
         var busd = result[1];
-        var amt = readableBUSD(busd, 4);
+        var amt = readableBUSD(busd, 4, 1e9);
 
         $("#example-miners").html(miners)
         $("#example-busd").html(roundNum(amt))
