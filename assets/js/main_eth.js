@@ -21,7 +21,7 @@ var cutoffStep=0;
 var withdrawCooldown=0;
 
 var contract;
-const minerAddress = '0xDAee35a96259A178715589eAFa614292C87406ED'
+const minerAddress = '0x63c31A94432C78b26Fced4A1546AD288763B9564'
 
 const tokenAddress = '0x6E5997a44Ea15Dec9feD08d8131dB392D5f3A03A' //WALT mainnet
 
