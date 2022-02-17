@@ -3,22 +3,22 @@ var web3;
 var spend;
 var usrBal;
 var priceInUSD;
-var lastNumEggs=-1
-var lastNumMiners=-1
-var lastSecondsUntilFull=100
-var lastHatchTime=0
-var eggstohatch1=0
-var maxDeposit=0
-var totalDeposits=0
+var lastNumEggs= -1
+var lastNumMiners= -1
+var lastSecondsUntilFull= 100
+var lastHatchTime= 0
+var eggstohatch1= 0
+var maxDeposit= 0
+var totalDeposits= 0
 var lastUpdate=new Date().getTime()
 var contractBalance;
 
-var compoundPercent=0;
-var compoundMaxDays=0;
-var compoundStep=0;
+var compoundPercent= 0;
+var compoundMaxDays= 0;
+var compoundStep= 0;
 
-var cutoffStep=0;
-var withdrawCooldown=0;
+var cutoffStep= 0;
+var withdrawCooldown= 0;
 
 var contract;
 const minerAddress = '0x63c31A94432C78b26Fced4A1546AD288763B9564'
@@ -603,7 +603,7 @@ function buyEggs(){
 
     var amt = web3.utils.toWei(busd, 'gwei');
 	if(+amt + +totalDeposits > +maxDeposit) {
-		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2, 1e18)} WALT`);
+		alert(`you cannot deposit more than ${readableBUSD(maxDeposit, 2, 1e9)} WALT`);
         return
     }
     if(+amt > usrBal) {
