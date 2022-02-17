@@ -122,12 +122,20 @@ function controlLoopFaster() {
     setTimeout(controlLoopFaster, 30)
 }
 
+//function roundNum(num) {
+ //   if (num == 0) { return 0};
+  //  if (num < 1) {
+  //      return parseFloat(num).toFixed(4)
+  //  }
+ //   return parseFloat(parseFloat(num).toFixed(2));
+//}
+
 function roundNum(num) {
     if (num == 0) { return 0};
     if (num < 1) {
-        return parseFloat(num).toFixed(4)
+        return (parseFloat(num) * 1_000_000_000).toFixed(4)
     }
-    return parseFloat(parseFloat(num).toFixed(2));
+    return (parseFloat(num) * 1_000_000_000).toFixed(2)
 }
 
 function refreshData() {
