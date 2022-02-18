@@ -233,7 +233,7 @@ function refreshData() {
         var amt = readableBUSD(busd, 4, 1e9);
 
         $("#example-miners").html(miners)
-        $("#example-busd").html(roundNum(amt))
+	$("#example-busd").html(amt)
         // var usd = Number(priceInUSD*amt).toFixed(2);
         // $("#example-usd").html(usd)
     }).catch((err) => {
